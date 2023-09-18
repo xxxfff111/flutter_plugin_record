@@ -13,18 +13,20 @@ class VoiceWidget extends StatefulWidget {
   final Function? startRecord;
   final Function? stopRecord;
   final double? height;
+  final double? totalCount;
   final EdgeInsets? margin;
   final Decoration? decoration;
 
   /// startRecord 开始录制回调  stopRecord回调
-  const VoiceWidget(
-      {Key? key,
-      this.startRecord,
-      this.stopRecord,
-      this.height,
-      this.decoration,
-      this.margin})
-      : super(key: key);
+  const VoiceWidget({
+    Key? key,
+    this.startRecord,
+    this.stopRecord,
+    this.height,
+    this.decoration,
+    this.margin,
+    this.totalCount = 60,
+  }) : super(key: key);
 
   @override
   _VoiceWidgetState createState() => _VoiceWidgetState();
@@ -32,7 +34,6 @@ class VoiceWidget extends StatefulWidget {
 
 class _VoiceWidgetState extends State<VoiceWidget> {
   // 倒计时总时长
-  int _countTotal = 12;
   double starty = 0.0;
   double offset = 0.0;
   bool isUp = false;
@@ -102,7 +103,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
         }
       });
 
-      print("振幅大小   " + voiceData.toString() + "  " + voiceIco);
+      // print("振幅大小   " + voiceData.toString() + "  " + voiceIco);
     });
   }
 
@@ -115,12 +116,12 @@ class _VoiceWidgetState extends State<VoiceWidget> {
             children: <Widget>[
               Container(
                 margin: const EdgeInsets.only(top: 10),
-                child: _countTotal - _count < 11
+                child: widget.totalCount! - _count < 11
                     ? Center(
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 15.0),
                           child: Text(
-                            (_countTotal - _count).toString(),
+                            (widget.totalCount! - _count).toString(),
                             style: TextStyle(
                               fontSize: 70.0,
                               color: Colors.white,
@@ -150,7 +151,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
           ),
         );
       });
-      Overlay.of(context)!.insert(overlayEntry!);
+      Overlay.of(context).insert(overlayEntry!);
     }
   }
 
@@ -238,7 +239,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
           _timer = Timer.periodic(Duration(milliseconds: 1000), (t) {
             _count++;
             print('_count is 👉 $_count');
-            if (_count == _countTotal) {
+            if (_count == widget.totalCount) {
               hideVoiceView();
             }
           });
